@@ -53,7 +53,7 @@ async def on_message(message):
                 # Call Groq API safely
                 chat_completion = groq_client.chat.completions.create(
                     messages=[{"role": "user", "content": clean_prompt}],
-                    model="llama-3.3-70b-versatile"
+                    model="llama-3.1-8b-instant"
                 )
                 reply = chat_completion.choices[0].message.content
 
