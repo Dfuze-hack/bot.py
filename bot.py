@@ -1,17 +1,34 @@
 import os
+import threading
 import discord
 from dotenv import load_dotenv
+from flask import Flask
 from groq import Groq
 
-# Load environment variables from the local .env file
+# Load local environment variables
 load_dotenv()
+
+# --- DUMMY WEB SERVER FOR RENDER ---
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is alive!"
+
+def run_web_server():
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
+# Run web server on a background thread
+threading.Thread(target=run_web_server, daemon=True).start()
+# -----------------------------------
 
 # Setup Discord intents
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 
-# Retrieve keys safely
+# Fetch secret keys
 DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
 GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
 
