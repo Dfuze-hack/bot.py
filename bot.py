@@ -3,7 +3,7 @@ import threading
 import discord
 from dotenv import load_dotenv
 from flask import Flask
-from groq import Groq, GroqError
+from groq import Groq
 
 # Load local environment variables
 load_dotenv()
@@ -50,19 +50,16 @@ async def on_message(message):
 
         async with message.channel.typing():
             try:
-                # Call Groq API safely
                 chat_completion = groq_client.chat.completions.create(
                     messages=[{"role": "user", "content": clean_prompt}],
                     model="llama-3.1-8b-instant"
                 )
                 reply = chat_completion.choices[0].message.content
 
-            except GroqError:
-                reply = "Groq servers are experiencing high traffic right now. Please try again in a few moments!"
             except Exception as e:
-                reply = "An error occurred while generating a response. Please try again."
+                # Direct debug error output
+                reply = f"**Debug Error:** `{str(e)}`"
 
-        # Handle message length limits safely
         if len(reply) > 2000:
             for i in range(0, len(reply), 1900):
                 await message.channel.send(reply[i:i+1900])
